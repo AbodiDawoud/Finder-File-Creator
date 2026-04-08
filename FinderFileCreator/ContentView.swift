@@ -4,6 +4,7 @@
 
 import FinderSync
 import SwiftUI
+import CodeEditor
 
 
 struct ContentView: View {
@@ -175,13 +176,14 @@ private struct FileEditorView: View {
                         .padding(.top, 18)
                         .padding(.bottom, 12)
 
-                    TextEditor(text: contentBinding)
-                        .font(.system(size: 13, weight: .regular, design: .monospaced))
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .foregroundStyle(.white)
+                    CodeEditor(
+                        source: contentBinding,
+                        language: CodeEditor.Language(rawValue: selectedTemplate.fileExtension.lowercased()),
+                        theme: CodeEditor.ThemeName(rawValue: "atom-one-dark")
+                    )
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 }
                 .background(Color.black.secondary)
                 .overlay(alignment: .bottom) {

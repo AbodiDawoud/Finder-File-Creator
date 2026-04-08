@@ -16,6 +16,7 @@
 		BD053CEC2F7886EC00351FE2 /* TemplateRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD053CEB2F7886EC00351FE2 /* TemplateRenderer.swift */; };
 		BD053CEE2F7886F400351FE2 /* SharedTemplateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD053CED2F7886F400351FE2 /* SharedTemplateStore.swift */; };
 		BD053CF02F78871D00351FE2 /* IconCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD053CEF2F78871D00351FE2 /* IconCatalog.swift */; };
+		BD354D792F863D8C00B6991B /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = BD354D782F863D8C00B6991B /* CodeEditor */; };
 		BD4FE8F72ED906F500240ABD /* Exten.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BD4FE8EF2ED906F500240ABD /* Exten.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BD702FC52F85C07900186684 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD702FC42F85C07900186684 /* OnboardingView.swift */; };
 		BD702FC92F85C10400186684 /* TokenBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD702FC82F85C10400186684 /* TokenBarView.swift */; };
@@ -95,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD354D792F863D8C00B6991B /* CodeEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +191,7 @@
 			);
 			name = FinderFileCreator;
 			packageProductDependencies = (
+				BD354D782F863D8C00B6991B /* CodeEditor */,
 			);
 			productName = FinderFileCreator;
 			productReference = BD4FE8DC2ED905C500240ABD /* FinderFileCreator.app */;
@@ -210,8 +213,6 @@
 				BD4FE8F02ED906F500240ABD /* Extension */,
 			);
 			name = Exten;
-			packageProductDependencies = (
-			);
 			productName = Exten;
 			productReference = BD4FE8EF2ED906F500240ABD /* Exten.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -243,6 +244,9 @@
 			);
 			mainGroup = BD4FE8D32ED905C500240ABD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BD354D772F863D8C00B6991B /* XCLocalSwiftPackageReference "CodeEditor" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BD4FE8DD2ED905C500240ABD /* Products */;
 			projectDirPath = "";
@@ -575,6 +579,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		BD354D772F863D8C00B6991B /* XCLocalSwiftPackageReference "CodeEditor" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = CodeEditor;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BD354D782F863D8C00B6991B /* CodeEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CodeEditor;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BD4FE8D42ED905C500240ABD /* Project object */;
 }

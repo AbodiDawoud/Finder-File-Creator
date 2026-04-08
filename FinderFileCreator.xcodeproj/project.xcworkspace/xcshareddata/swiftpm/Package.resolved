@@ -1,0 +1,15 @@
+{
+  "originHash" : "b18e18f6ff12d52595d1ba601d6a7c70b291a023709a49eda22f6d90b828e7ac",
+  "pins" : [
+    {
+      "identity" : "highlightr",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/helje5/Highlightr",
+      "state" : {
+        "revision" : "bd0358056ff1f12ea83833a9fc1b3b5a396a9da0",
+        "version" : "3.0.2"
+      }
+    }
+  ],
+  "version" : 3
+}
