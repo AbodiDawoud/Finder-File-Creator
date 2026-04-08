@@ -17,6 +17,7 @@
 		BD053CEE2F7886F400351FE2 /* SharedTemplateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD053CED2F7886F400351FE2 /* SharedTemplateStore.swift */; };
 		BD053CF02F78871D00351FE2 /* IconCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD053CEF2F78871D00351FE2 /* IconCatalog.swift */; };
 		BD354D792F863D8C00B6991B /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = BD354D782F863D8C00B6991B /* CodeEditor */; };
+		BD354D7B2F8657CA00B6991B /* IconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD354D7A2F8657CA00B6991B /* IconPickerView.swift */; };
 		BD4FE8F72ED906F500240ABD /* Exten.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BD4FE8EF2ED906F500240ABD /* Exten.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BD702FC52F85C07900186684 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD702FC42F85C07900186684 /* OnboardingView.swift */; };
 		BD702FC92F85C10400186684 /* TokenBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD702FC82F85C10400186684 /* TokenBarView.swift */; };
@@ -63,6 +64,7 @@
 		BD053CEB2F7886EC00351FE2 /* TemplateRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRenderer.swift; sourceTree = "<group>"; };
 		BD053CED2F7886F400351FE2 /* SharedTemplateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedTemplateStore.swift; sourceTree = "<group>"; };
 		BD053CEF2F78871D00351FE2 /* IconCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconCatalog.swift; sourceTree = "<group>"; };
+		BD354D7A2F8657CA00B6991B /* IconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerView.swift; sourceTree = "<group>"; };
 		BD4FE8DC2ED905C500240ABD /* FinderFileCreator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FinderFileCreator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD4FE8EF2ED906F500240ABD /* Exten.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Exten.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD702FC42F85C07900186684 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 			children = (
 				BD702FC42F85C07900186684 /* OnboardingView.swift */,
 				BD702FC82F85C10400186684 /* TokenBarView.swift */,
+				BD354D7A2F8657CA00B6991B /* IconPickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -286,6 +289,7 @@
 				BD053CE72F7886AB00351FE2 /* Extensions+.swift in Sources */,
 				BD702FC52F85C07900186684 /* OnboardingView.swift in Sources */,
 				BD053CD82F7882B800351FE2 /* ContentView.swift in Sources */,
+				BD354D7B2F8657CA00B6991B /* IconPickerView.swift in Sources */,
 				BD053CEE2F7886F400351FE2 /* SharedTemplateStore.swift in Sources */,
 				BD053CD92F7882B800351FE2 /* TemplateDefinition.swift in Sources */,
 				BD053CF02F78871D00351FE2 /* IconCatalog.swift in Sources */,

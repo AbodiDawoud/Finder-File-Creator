@@ -5,6 +5,7 @@
 import FinderSync
 import SwiftUI
 import Observation
+import UniformTypeIdentifiers
 
 
 @MainActor
@@ -191,6 +192,14 @@ final class TemplateLibrary {
     func setTemplateIcon(id: TemplateDefinition.ID, assetName: String) {
         guard let index = templates.firstIndex(where: { $0.id == id }) else { return }
         templates[index].iconAssetName = assetName
+        templates[index].customIconRelativePath = nil
+        persist()
+    }
+    
+    func importCustomIcon(for id: TemplateDefinition.ID, from url: URL) throws {
+        guard let index = templates.firstIndex(where: { $0.id == id }) else { return }
+        let relativePath = try SharedTemplateStore.importCustomIcon(from: url)
+        templates[index].customIconRelativePath = relativePath
         persist()
     }
 
@@ -243,5 +252,20 @@ final class TemplateLibrary {
 
     private func persist() {
         SharedTemplateStore.save(templates)
+    }
+
+    
+    func resolvedIconImage(for template: TemplateDefinition) -> NSImage? {
+        if let customIconRelativePath = template.customIconRelativePath,
+           let url = SharedTemplateStore.customIconURL(for: customIconRelativePath),
+           let image = NSImage(contentsOf: url) {
+            return image
+        }
+
+        return NSImage(named: template.iconAssetName)
+    }
+
+    var supportedImportedIconTypes: [UTType] {
+        [.png, .jpeg, .gif, .tiff, .bmp, .webP, .icns, .image, .pdf]
     }
 }

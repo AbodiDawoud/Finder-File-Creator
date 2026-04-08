@@ -14,7 +14,6 @@ enum TemplateIconCatalog {
         "Plist",
         "metal",
         "Shell",
-        "TerminalIcon",
         "JavaScript",
         "TypeScript",
         "Tsx",
@@ -42,5 +41,15 @@ enum TemplateIconCatalog {
         "Scala",
         "StoryboardFile",
         "EntitlementsFile",
+        "kubernetesY",
+        "graphql",
+        "gitignore",
+        "relay",
     ]
+
+    static func displayName(for assetName: String) -> String {
+        assetName
+            .replacingOccurrences(of: "Lang", with: "")
+            .replacingOccurrences(of: "File", with: "")
+    }
 }

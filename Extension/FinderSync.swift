@@ -30,7 +30,7 @@ class FinderSync: FIFinderSync {
                 let item = NSMenuItem(title: template.title, action: #selector(createFileFromTemplate(_:)), keyEquivalent: "")
                 item.tag = index
                 item.target = self
-                item.image = NSImage(named: template.iconAssetName)
+                item.image = resolvedImage(for: template)
                 submenu.addItem(item)
             }
         }
@@ -144,6 +144,16 @@ class FinderSync: FIFinderSync {
 
             counter += 1
         }
+    }
+
+    private func resolvedImage(for template: TemplateDefinition) -> NSImage? {
+        if let customIconRelativePath = template.customIconRelativePath,
+           let url = SharedTemplateStore.customIconURL(for: customIconRelativePath),
+           let image = NSImage(contentsOf: url) {
+            return image
+        }
+
+        return NSImage(named: template.iconAssetName)
     }
 }
 

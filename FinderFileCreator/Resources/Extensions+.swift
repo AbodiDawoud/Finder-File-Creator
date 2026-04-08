@@ -24,3 +24,7 @@ extension JSONEncoder {
         return encoder
     }
 }
+
+extension String: @retroactive Identifiable {
+    public var id: String { self }
+}

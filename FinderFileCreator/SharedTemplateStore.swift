@@ -10,6 +10,7 @@ import Foundation
 enum SharedTemplateStore {
     static let appGroupID = "group.com.app.FinderFileCreator.shared"
     private static let relativePath = "TemplateStudio/templates.json"
+    private static let iconsDirectoryName = "CustomIcons"
 
     /// Loads the saved template library from shared storage, or falls back to
     /// the bundled defaults when no valid persisted data is available.
@@ -68,5 +69,33 @@ enum SharedTemplateStore {
         } catch {
             return nil
         }
+    }
+    
+
+    static func importCustomIcon(from sourceURL: URL) throws -> String {
+        guard let directoryURL = iconsDirectoryURL else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+
+        let fileExtension = sourceURL.pathExtension.nonEmpty ?? "png"
+        let destinationURL = directoryURL.appendingPathComponent("\(UUID().uuidString).\(fileExtension)")
+        try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
+        return "\(iconsDirectoryName)/\(destinationURL.lastPathComponent)"
+    }
+    
+
+    static func customIconURL(for relativePath: String) -> URL? {
+        iconsDirectoryURL?.appendingPathComponent((relativePath as NSString).lastPathComponent)
+    }
+    
+    
+    private static var iconsDirectoryURL: URL? {
+        guard let templatesURL = storageURL(createIfNeeded: true) else { return nil }
+
+        let directoryURL = templatesURL.deletingLastPathComponent().appendingPathComponent(iconsDirectoryName, isDirectory: true)
+        // create directory if needed
+        try? FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true)
+
+        return directoryURL
     }
 }

@@ -12,6 +12,7 @@ struct TemplateDefinition: Identifiable, Codable, Equatable {
     var fileExtension: String
     var content: String
     var iconAssetName: String
+    var customIconRelativePath: String?
     var isEnabled: Bool
 
     init(
@@ -21,6 +22,7 @@ struct TemplateDefinition: Identifiable, Codable, Equatable {
         fileExtension: String,
         content: String,
         iconAssetName: String,
+        customIconRelativePath: String? = nil,
         isEnabled: Bool = true
     ) {
         self.id = id
@@ -29,6 +31,7 @@ struct TemplateDefinition: Identifiable, Codable, Equatable {
         self.fileExtension = fileExtension
         self.content = content
         self.iconAssetName = iconAssetName
+        self.customIconRelativePath = customIconRelativePath
         self.isEnabled = isEnabled
     }
 }

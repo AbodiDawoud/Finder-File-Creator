@@ -165,7 +165,7 @@ private struct SidebarView: View {
 
 private struct FileEditorView: View {
     @Environment(TemplateLibrary.self) private var library
-    @State private var showingIconMenu = false
+    @State private var showingIconPicker = false
 
     var body: some View {
         Group {
@@ -189,6 +189,9 @@ private struct FileEditorView: View {
                 .overlay(alignment: .bottom) {
                     TokenBarView()
                         .padding(.bottom, 24)
+                }
+                .sheet(isPresented: $showingIconPicker) {
+                    IconPickerView(template: selectedTemplate)
                 }
             } else {
                 Color.white.overlay(
@@ -216,6 +219,21 @@ private struct FileEditorView: View {
             Spacer(minLength: 16)
 
             HStack(spacing: 18) {
+                Button {
+                    showingIconPicker = true
+                } label: {
+                        TemplateIconThumbnail(template: template, size: 16)
+                        .background {
+                            Circle()
+                                .stroke(.white.opacity(0.12), lineWidth: 1)
+                                .fill(.white.opacity(0.07))
+                                .frame(width: 28, height: 28)
+                        }
+                }
+                .buttonStyle(.plain)
+                .pointerStyle(.link)
+                .help("Choose icon")
+
                 IconToolbarButton(assetName: "PreviewAction") {
                     library.toggleTemplateEnabled(id: template.id)
                 }
@@ -232,14 +250,6 @@ private struct FileEditorView: View {
 
                     Button(template.isEnabled ? "Disable" : "Enable") {
                         library.toggleTemplateEnabled(id: template.id)
-                    }
-
-                    Menu("Change Icon") {
-                        ForEach(TemplateIconCatalog.all, id: \.self) { assetName in
-                            Button(assetName) {
-                                library.setTemplateIcon(id: template.id, assetName: assetName)
-                            }
-                        }
                     }
 
                     Divider()
@@ -309,10 +319,7 @@ private struct SidebarTemplateRow: View {
     
     var body: some View {
         HStack(spacing: 9) {
-            Image("\(template.iconAssetName)")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 20)
+            TemplateIconThumbnail(template: template, size: 19)
 
             Text(template.title)
                 .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
@@ -385,5 +392,50 @@ private struct ExtensionDisabledCard: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .strokeBorder(.quaternary, lineWidth: 0.8)
         }
+    }
+}
+
+
+struct TemplateIconThumbnail: View {
+    @Environment(TemplateLibrary.self) private var library
+
+    let template: TemplateDefinition?
+    let assetName: String?
+    let size: CGFloat
+
+    init(template: TemplateDefinition, size: CGFloat) {
+        self.template = template
+        self.assetName = nil
+        self.size = size
+    }
+
+    init(assetName: String, size: CGFloat) {
+        self.template = nil
+        self.assetName = assetName
+        self.size = size
+    }
+
+    var body: some View {
+        Group {
+            if let template, let image = library.resolvedIconImage(for: template) {
+                Image(nsImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
+            } else if let assetName {
+                Image(assetName)
+                    .resizable()
+                    .renderingMode(.original)
+                    .interpolation(.high)
+                    .aspectRatio(contentMode: .fit)
+                    .scaledToFit()
+            } else {
+                Image(systemName: "doc")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(width: size, height: size)
     }
 }
