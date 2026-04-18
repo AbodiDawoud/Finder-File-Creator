@@ -18,7 +18,7 @@ class FinderSync: FIFinderSync {
     }
 
     override func menu(for menu: FIMenuKind) -> NSMenu? {
-        guard menu == .contextualMenuForContainer else { return nil }
+        guard let targetFolder = targetFolderURL(for: menu) else { return nil }
 
         let newMenu = NSMenu()
         let parentMenuItem = NSMenuItem(title: "New File", action: nil, keyEquivalent: "")
@@ -30,6 +30,7 @@ class FinderSync: FIFinderSync {
                 let item = NSMenuItem(title: template.title, action: #selector(createFileFromTemplate(_:)), keyEquivalent: "")
                 item.tag = index
                 item.target = self
+                item.representedObject = targetFolder
                 item.image = resolvedImage(for: template)
                 submenu.addItem(item)
             }
@@ -37,14 +38,14 @@ class FinderSync: FIFinderSync {
 
         parentMenuItem.submenu = submenu
         newMenu.addItem(parentMenuItem)
-        newMenu.addItem(terminalMenuItem)
+        newMenu.addItem(terminalMenuItem(for: targetFolder))
         submenu.addItem(customizeMenuItem)
 
         return newMenu
     }
 
     @objc func createFileFromTemplate(_ sender: NSMenuItem) {
-        guard let targetFolder = FIFinderSyncController.default().targetedURL() else {
+        guard let targetFolder = sender.representedObject as? URL else {
             NSApp.showException("Failed to get the target URL from FIFinderSyncController, check FinderSync is enabled.")
             return NSLog("No target URL")
         }
@@ -62,11 +63,12 @@ class FinderSync: FIFinderSync {
         NSWorkspace.shared.selectFile(fileURL.path, inFileViewerRootedAtPath: "")
     }
 
-    var terminalMenuItem: NSMenuItem {
-        let item = NSMenuItem(title: "Terminal", action: #selector(openCurrentDicInTerminal), keyEquivalent: "")
+    func terminalMenuItem(for targetFolder: URL) -> NSMenuItem {
+        let item = NSMenuItem(title: "Terminal", action: #selector(openTerminalHere(_:)), keyEquivalent: "")
         item.image = NSImage(named: "TerminalIcon")
-        item.toolTip = "Open Terminal in current directory"
+        item.toolTip = "Open Terminal in \(targetFolder.path)"
         item.target = self
+        item.representedObject = targetFolder
 
         return item
     }
@@ -93,8 +95,8 @@ class FinderSync: FIFinderSync {
         }
     }
 
-    @objc func openCurrentDicInTerminal(_ sender: AnyObject?) {
-        guard let url = FIFinderSyncController.default().targetedURL() else { return }
+    @objc func openTerminalHere(_ sender: NSMenuItem) {
+        guard let url = sender.representedObject as? URL else { return }
 
         let task = Process()
         task.currentDirectoryURL = url
@@ -119,6 +121,28 @@ class FinderSync: FIFinderSync {
             .deletingLastPathComponent()
         
         NSWorkspace.shared.openApplication(at: appURL, configuration: .init())
+    }
+
+    private func targetFolderURL(for menu: FIMenuKind) -> URL? {
+        switch menu {
+        case .contextualMenuForContainer:
+            return FIFinderSyncController.default().targetedURL()
+        case .contextualMenuForItems:
+            return selectedFolderURL()
+        default:
+            return nil
+        }
+    }
+
+    private func selectedFolderURL() -> URL? {
+        guard let selectedURLs = FIFinderSyncController.default().selectedItemURLs() else {
+            return nil
+        }
+
+        return selectedURLs.first { url in
+            var isDirectory: ObjCBool = false
+            return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
+        }
     }
 
     

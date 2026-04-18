@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/finder-file-creator',
+  output: 'export',
   typescript: {
     ignoreBuildErrors: true,
   },
