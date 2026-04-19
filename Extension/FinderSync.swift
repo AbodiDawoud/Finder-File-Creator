@@ -45,12 +45,17 @@ class FinderSync: FIFinderSync {
     }
 
     @objc func createFileFromTemplate(_ sender: NSMenuItem) {
-        guard let targetFolder = sender.representedObject as? URL else {
+        guard let targetFolder = folderURL(from: sender) else {
             NSApp.showException("Failed to get the target URL from FIFinderSyncController, check FinderSync is enabled.")
             return NSLog("No target URL")
         }
         
         let activeTemplates = SharedTemplateStore.load().filter(\.isEnabled)
+        guard activeTemplates.indices.contains(sender.tag) else {
+            NSApp.showException("The selected template is no longer available.")
+            return NSLog("Template index out of range")
+        }
+        
         let template = activeTemplates[sender.tag]
 
         let folderName = targetFolder.lastPathComponent
@@ -96,18 +101,22 @@ class FinderSync: FIFinderSync {
     }
 
     @objc func openTerminalHere(_ sender: NSMenuItem) {
-        guard let url = sender.representedObject as? URL else { return }
-
-        let task = Process()
-        task.currentDirectoryURL = url
-        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
-        task.arguments = ["-a", "Terminal", url.path]
-
-        do {
-            try task.run()
-        } catch {
-            NSLog("Failed to launch terminal: \(error.localizedDescription)")
-            NSApp.showException(error.localizedDescription)
+        guard let url = terminalFolderURL(from: sender) else {
+            NSApp.showException("Failed to get the target URL from FIFinderSyncController, check FinderSync is enabled.")
+            return NSLog("No target URL")
+        }
+        
+        guard let terminalURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Terminal") else {
+            NSApp.showException("Terminal.app could not be found.")
+            return NSLog("Terminal.app could not be found")
+        }
+        
+        let configuration = NSWorkspace.OpenConfiguration()
+        NSWorkspace.shared.open([url], withApplicationAt: terminalURL, configuration: configuration) { _, error in
+            if let error {
+                NSLog("Failed to launch terminal: \(error.localizedDescription)")
+                NSApp.showException(error.localizedDescription)
+            }
         }
     }
     
@@ -126,23 +135,48 @@ class FinderSync: FIFinderSync {
     private func targetFolderURL(for menu: FIMenuKind) -> URL? {
         switch menu {
         case .contextualMenuForContainer:
-            return FIFinderSyncController.default().targetedURL()
+            return directoryURL(from: FIFinderSyncController.default().targetedURL())
         case .contextualMenuForItems:
-            return selectedFolderURL()
+            return selectedContextFolderURL() ?? directoryURL(from: FIFinderSyncController.default().targetedURL())
         default:
             return nil
         }
     }
 
-    private func selectedFolderURL() -> URL? {
-        guard let selectedURLs = FIFinderSyncController.default().selectedItemURLs() else {
+    private func folderURL(from sender: NSMenuItem) -> URL? {
+        if let url = directoryURL(from: sender.representedObject as? URL) {
+            return url
+        }
+        
+        return directoryURL(from: FIFinderSyncController.default().targetedURL()) ?? selectedContextFolderURL()
+    }
+    
+    private func terminalFolderURL(from sender: NSMenuItem) -> URL? {
+        selectedContextFolderURL() ?? folderURL(from: sender)
+    }
+
+    private func selectedContextFolderURL() -> URL? {
+        guard let selectedURL = FIFinderSyncController.default().selectedItemURLs()?.first else {
             return nil
         }
 
-        return selectedURLs.first { url in
-            var isDirectory: ObjCBool = false
-            return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
+        if let directoryURL = directoryURL(from: selectedURL) {
+            return directoryURL
         }
+        
+        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
+        return selectedURL.deletingLastPathComponent()
+    }
+    
+    private func directoryURL(from url: URL?) -> URL? {
+        guard let url else { return nil }
+        
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            return nil
+        }
+        
+        return url
     }
 
     
@@ -154,12 +188,13 @@ class FinderSync: FIFinderSync {
         }
 
         let preferredExtension = candidateURL.pathExtension
+        let preferredBaseName = preferredExtension.isEmpty ? preferredName : candidateURL.deletingPathExtension().lastPathComponent
         var counter = 2
 
         while true {
             let numberedName = preferredExtension.isEmpty
-                ? "\(preferredName) \(counter)"
-                : "\(preferredName) \(counter).\(preferredExtension)"
+                ? "\(preferredBaseName) \(counter)"
+                : "\(preferredBaseName) \(counter).\(preferredExtension)"
             let numberedURL = directory.appending(path: numberedName)
 
             if !FileManager.default.fileExists(atPath: numberedURL.path) {
